@@ -9,4 +9,6 @@ necesitas crear un archivo acme con el siguente comadno, recuerda q el archivo n
 touch acme.json
 
 
+comando para darle permisos
+
 sudo chown 600:600 acme.json
