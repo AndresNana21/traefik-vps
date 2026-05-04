@@ -6,23 +6,29 @@ services:
     command:
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
-      - "--entrypoints.web.address=:80"
+      - "--entrypoints.web.address=:80" # colocar otro puerto que no sea el 80 en local para evitar conflictos
       - "--entrypoints.websecure.address=:443"
-      # Redirección global a HTTPS
-      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
-      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
-      # Configuración de SSL
-      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
-      - "--certificatesresolvers.myresolver.acme.email=tu-correo@nanadev.online"
-      - "--certificatesresolvers.myresolver.acme.storage=/acme.json"
+      
+      # --- CONFIGURACIÓN PARA PRODUCCIÓN (VPS) ---
+      # Descomenta las siguientes líneas cuando subas al VPS para activar HTTPS automático
+      
+      # 1. Redirección global de HTTP a HTTPS
+      # - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      # - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+      
+      # 2. Configuración de Certificados SSL (Let's Encrypt)
+      # - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      # - "--certificatesresolvers.myresolver.acme.email=tu-email@correo.com"
+      # - "--certificatesresolvers.myresolver.acme.storage=/acme.json"
+      
       - "--api.dashboard=true"
     ports:
-      - "80:80"
+      - "80:80" # colocar otro puerto q no sea el 80 en local para evitar conflictos puertoNuevo:80
       - "443:443"
-      # - "8081:8080" # Dashboard
+      - "8081:8080" # Dashboard accesible en localhost:8081
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./acme.json:/acme.json
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./acme.json:/acme.json"
     networks:
       - web
 
