@@ -3,32 +3,37 @@ services:
     image: traefik:v3.6
     container_name: traefik
     restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
     command:
+      # Configuración básica
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
-      - "--entrypoints.web.address=:80" # colocar otro puerto que no sea el 80 en local para evitar conflictos
+      - "--entrypoints.web.address=:80" 
       - "--entrypoints.websecure.address=:443"
+      - "--api.dashboard=true"
       
-      # --- CONFIGURACIÓN PARA PRODUCCIÓN (VPS) ---
-      # Descomenta las siguientes líneas cuando subas al VPS para activar HTTPS automático
-      
-      # 1. Redirección global de HTTP a HTTPS
+      # --- CONFIGURACIÓN PARA PRODUCCIÓN (Descomenta al pasar a VPS) ---
+      # 1. Redirección global HTTP -> HTTPS
       # - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
       # - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
       
-      # 2. Configuración de Certificados SSL (Let's Encrypt)
+      # 2. Configuración de Let's Encrypt
       # - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
       # - "--certificatesresolvers.myresolver.acme.email=tu-email@correo.com"
       # - "--certificatesresolvers.myresolver.acme.storage=/acme.json"
-      
-      - "--api.dashboard=true"
+
     ports:
-      - "80:80" # colocar otro puerto q no sea el 80 en local para evitar conflictos puertoNuevo:80
+      - "8082:80"     # En VPS usar 80:80 y en local puedes usar algo como 8082:80
       - "443:443"
-      - "8081:8080" # Dashboard accesible en localhost:8081
+      - "8081:8080" # Dashboard local: http://localhost:8081
+      
     volumes:
+      # Acceso al socket de Docker para descubrir servicios
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      # Archivo de certificados persistente
       - "./acme.json:/acme.json"
+      
     networks:
       - web
 

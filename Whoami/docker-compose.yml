@@ -1,0 +1,15 @@
+services:
+  whoami:
+    image: traefik/whoami
+    container_name: simple-app
+    networks:
+      - web
+    labels:
+      - "traefik.enable=true"
+      # Sustituye 'mi-app.localhost' por el dominio que quieras usar en tu PC
+      - "traefik.http.routers.whoami.rule=Host(`mi-app.localhost`)"
+      - "traefik.http.routers.whoami.entrypoints=web"
+
+networks:
+  web:
+    external: true
